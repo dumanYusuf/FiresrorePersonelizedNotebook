@@ -68,7 +68,7 @@ fun RegisterPage(
             errorMessage = "Passwords do not match."
             return
         }
-        viewModel.register(tfEmail, tfPassword)
+        viewModel.register(tfEmail, tfPassword,tfUserName,tfUserLastName)
     }
 
 

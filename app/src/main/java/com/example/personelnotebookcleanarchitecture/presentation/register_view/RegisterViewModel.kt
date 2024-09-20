@@ -19,10 +19,10 @@ class RegisterViewModel @Inject constructor(private val registerUseCase: Registe
     val authStat: StateFlow<RegisterState> = _authState
 
 
-    fun register(email:String,password:String){
+    fun register(email:String,password:String,userName:String,userLastName:String){
         viewModelScope.launch {
             _authState.value= RegisterState(isLoading = true)
-            registerUseCase.registerUser(email,password).collect{
+            registerUseCase.registerUser(email,password,userName,userLastName).collect{
                 when(it){
                     is Resource.Success->{
                         _authState.value= RegisterState(isSucsess = true)
