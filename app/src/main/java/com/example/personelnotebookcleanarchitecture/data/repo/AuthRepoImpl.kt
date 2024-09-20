@@ -31,7 +31,7 @@ class AuthRepoImpl @Inject constructor(private val auth:FirebaseAuth):AuthRepo {
 
     override suspend fun registerUser(email: String, password: String, userName: String, userLastName: String): Flow<Resource<User>> = flow {
         try {
-            // Firebase Authentication ile kullanıcı kaydı
+
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val firebaseUser = result.user
 
@@ -40,14 +40,14 @@ class AuthRepoImpl @Inject constructor(private val auth:FirebaseAuth):AuthRepo {
                     id = user.uid,
                     email = email,
                     userName = userName,
-                    userLastName = userLastName
+                    userLastName = userLastName,
+                    profilUrl = "" // "https://media.istockphoto.com/id/1332100919/tr/vekt%C3%B6r/man-icon-black-icon-person-symbol.jpg?s=612x612&w=0&k=20&c=lVmBCgzh7mw_UbIHKvFtpi7W8J21mEdrNQsfOgn0PxA="
                 )
 
-                // Firestore'a kullanıcı bilgilerini kaydetme
                 val firestore = FirebaseFirestore.getInstance()
                 firestore.collection("Users").document(newUser.id).set(newUser.toMap()).await()
 
-                emit(Resource.Success(newUser))  // Başarılı sonuç dönüyoruz
+                emit(Resource.Success(newUser))
             } ?: kotlin.run {
                 emit(Resource.Error("User is null"))
             }
