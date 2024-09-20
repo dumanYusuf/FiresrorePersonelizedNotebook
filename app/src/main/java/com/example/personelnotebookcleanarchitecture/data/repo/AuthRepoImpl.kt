@@ -56,6 +56,9 @@ class AuthRepoImpl @Inject constructor(private val auth:FirebaseAuth):AuthRepo {
         }
     }
 
+    override fun logOut() {
+        return auth.signOut()
+    }
 
 
     // burda FirebaseUserı user Model sınıfımızı çeviriyoruz extension fonksiyon yardımı ile

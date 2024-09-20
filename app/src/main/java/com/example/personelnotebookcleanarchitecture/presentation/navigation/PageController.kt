@@ -28,12 +28,21 @@ import com.example.personelnotebookcleanarchitecture.R
 @Composable
 fun PageController() {
     val auth = FirebaseAuth.getInstance()
-    val currentUser = auth.currentUser
+    var currentUser by remember { mutableStateOf(auth.currentUser) }
     var startDestination by remember { mutableStateOf(Screen.RegisterPage.route) }
 
-    val items = listOf("HomePage", "Person")
-    val currentItem = remember { mutableStateOf(0) }
+    // Firebase auth değişikliklerini dinle
+    DisposableEffect(Unit) {
+        val authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
+            currentUser = firebaseAuth.currentUser
+        }
+        auth.addAuthStateListener(authStateListener)
+        onDispose {
+            auth.removeAuthStateListener(authStateListener)
+        }
+    }
 
+    // startDestination'ı kullanıcı durumuna göre ayarla
     LaunchedEffect(currentUser) {
         startDestination = if (currentUser != null) {
             Screen.HomePage.route
@@ -42,55 +51,66 @@ fun PageController() {
         }
     }
 
-    val controller = rememberNavController()
+    val items = listOf("HomePage", "Person")
+    val currentItem = remember { mutableStateOf(0) }
+    val navController = rememberNavController()
 
     Scaffold(
         bottomBar = {
-            NavigationBar {
-                items.forEachIndexed { index, item ->
-                    NavigationBarItem(
-                        selected = currentItem.value == index,
-                        onClick = {
-                            currentItem.value = index
-                            controller.navigate(
+            // Eğer kullanıcı giriş yaptıysa, bottom bar göster
+            if (currentUser != null) {
+                NavigationBar {
+                    items.forEachIndexed { index, item ->
+                        NavigationBarItem(
+                            selected = currentItem.value == index,
+                            onClick = {
+                                currentItem.value = index
+                                navController.navigate(
+                                    when (item) {
+                                        "HomePage" -> Screen.HomePage.route
+                                        "Person" -> Screen.PersonPage.route
+                                        else -> Screen.HomePage.route
+                                    }
+                                )
+                            },
+                            label = { Text(text = item) },
+                            icon = {
                                 when (item) {
-                                    "HomePage" -> Screen.HomePage.route
-                                    "Person" -> Screen.PersonPage.route
-                                    else -> Screen.HomePage.route
+                                    "HomePage" -> Icon(painter = painterResource(id = R.drawable.home), contentDescription = "")
+                                    "Person" -> Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")
                                 }
-                            )
-                        },
-                        label = { Text(text = item) },
-                        icon = {
-                            when (item) {
-                                "HomePage" -> Icon(painter = painterResource(id = R.drawable.home), contentDescription = "")
-                                "Person" -> Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
     ) { innerPadding ->
         NavHost(
-            navController = controller,
-            startDestination = startDestination,
+            navController = navController,
+            startDestination = startDestination, // Dinamik başlangıç ekranı
             Modifier.padding(innerPadding)
         ) {
+            // Register Page
             composable(Screen.RegisterPage.route) {
-                RegisterPage(navController = controller)
+                RegisterPage(navController = navController)
             }
+            // Login Page
             composable(Screen.LoginPage.route) {
-                LoginPage(navController = controller)
+                LoginPage(navController = navController)
             }
+            // Home Page (Sadece giriş yaptıktan sonra)
             composable(Screen.HomePage.route) {
-                HomePage(navController = controller)
+                HomePage(navController = navController)
             }
+            // Person Page (Sadece giriş yaptıktan sonra)
             composable(Screen.PersonPage.route) {
                 PersonPage()
             }
         }
     }
 }
+
+
 
 

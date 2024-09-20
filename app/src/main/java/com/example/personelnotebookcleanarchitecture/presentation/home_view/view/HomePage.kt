@@ -31,14 +31,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.personelnotebookcleanarchitecture.R
 import com.example.personelnotebookcleanarchitecture.Screen
+import com.example.personelnotebookcleanarchitecture.presentation.home_view.HomeViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomePage(
-    navController: NavController
+    navController: NavController,
+    viewModel: HomeViewModel= hiltViewModel()
 ) {
     val showDialog = remember { mutableStateOf(false) }
 
@@ -66,8 +69,11 @@ fun HomePage(
             contentDescription = "Add"
         )
 
-        Button(onClick = {
-            navController.navigate(Screen.LoginPage.route)
+        Button(
+            modifier = Modifier.align(Alignment.Center),
+            onClick = {
+                viewModel.logOut()
+                navController.navigate(Screen.LoginPage.route)
         }) {
             Text(text = "LogOut")
         }
