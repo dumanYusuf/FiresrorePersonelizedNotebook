@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "931439176378",
+    "project_id": "cleanfirestore-8a628",
+    "storage_bucket": "cleanfirestore-8a628.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931439176378:android:9f0a574c5b625563567083",
+        "android_client_info": {
+          "package_name": "com.example.firebasecrudcleanarchitecture"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGFiWX5O6hb-FlWESj1ECxQ7cwEmUp1Fg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:931439176378:android:32c9bc24b43f26dc567083",
+        "android_client_info": {
+          "package_name": "com.example.personelnotebookcleanarchitecture"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGFiWX5O6hb-FlWESj1ECxQ7cwEmUp1Fg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
