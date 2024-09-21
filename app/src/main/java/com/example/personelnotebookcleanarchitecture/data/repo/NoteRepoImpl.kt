@@ -73,5 +73,22 @@ class NoteRepoImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateNote(notes: Notes): Resource<Notes> {
+        return try {
+            val userId = firebaseAuth.currentUser?.uid
+            if (userId != null) {
+                val userNotesDocument = firestore.collection("Users").document(userId)
+                    .collection("Notes").document(notes.noteId)
+
+                userNotesDocument.update(notes.toMap()).await() //set de kullanabiliriz
+                Resource.Success(notes)
+            } else {
+                Resource.Error("User not found")
+            }
+        } catch (e: Exception) {
+            Resource.Error("Error updating note: ${e.message}")
+        }
+    }
+
 }
 

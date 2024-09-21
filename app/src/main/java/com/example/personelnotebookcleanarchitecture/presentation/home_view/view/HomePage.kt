@@ -42,9 +42,10 @@ import com.example.personelnotebookcleanarchitecture.presentation.home_view.Home
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomePage(
-    viewModel: HomeViewModel= hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val showDialog = remember { mutableStateOf(false) }
+    val selectedNote = remember { mutableStateOf<Notes?>(null) }
     val stateNote by viewModel.state.collectAsState()
 
     LaunchedEffect(key1 = true) {
@@ -82,10 +83,14 @@ fun HomePage(
                             Spacer(modifier = Modifier.size(4.dp))
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                 Text(text = note.content, fontSize = 20.sp)
-                                IconButton(onClick = { /*TODO*/ }) {
+                                IconButton(onClick = {
+                                    selectedNote.value = note
+                                    showDialog.value = true
+                                }) {
                                     Icon(painter = painterResource(id = R.drawable.edit), contentDescription = "")
                                 }
-                            }                        }
+                            }
+                        }
                     }
                 }
             }
@@ -95,29 +100,39 @@ fun HomePage(
                 .size(100.dp)
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
-                .clickable { showDialog.value = true },
+                .clickable {
+                    selectedNote.value = null
+                    showDialog.value = true
+                },
             painter = painterResource(id = R.drawable.add),
             contentDescription = "Add"
         )
     }
 
-
-
     if (showDialog.value) {
         AddNoteDialog(
-            notes = null,
+            notes = selectedNote.value,
             onDismiss = { showDialog.value = false },
-            onSave = { title, content ,->
-                viewModel.addNote(Notes(title = title, content = content,))
+            onSave = { title, content ->
+                if (selectedNote.value != null) {
+                    // Update existing note
+                    val updatedNote = selectedNote.value!!.copy(title = title, content = content)
+                    viewModel.updateNote(updatedNote)
+                } else {
+                    // Add a new note
+                    viewModel.addNote(Notes(title = title, content = content))
+                }
                 viewModel.getNotes()
                 showDialog.value = false
             }
         )
     }
-    Box (modifier = Modifier.fillMaxSize()){
-        if (stateNote.isLoading){
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (stateNote.isLoading) {
             CircularProgressIndicator(
-                color = Color.Red, modifier = Modifier
+                color = Color.Red,
+                modifier = Modifier
                     .align(alignment = Alignment.Center)
                     .size(50.dp)
             )
@@ -129,15 +144,14 @@ fun HomePage(
 fun AddNoteDialog(
     notes: Notes?,
     onDismiss: () -> Unit,
-    onSave:(String,String)->Unit
+    onSave: (String, String) -> Unit
 ) {
-    val title = remember { mutableStateOf("") }
-    val content = remember { mutableStateOf("") }
-
+    val title = remember { mutableStateOf(notes?.title ?: "") }
+    val content = remember { mutableStateOf(notes?.content ?: "") }
 
     AlertDialog(
-        onDismissRequest = {},
-        title = { Text(text = "Add Note") },
+        onDismissRequest = { onDismiss() },
+        title = { Text(text = if (notes == null) "Add Note" else "Edit Note") },
         text = {
             Column {
                 OutlinedTextField(
@@ -155,8 +169,7 @@ fun AddNoteDialog(
         },
         confirmButton = {
             TextButton(onClick = {
-                // save note
-                onSave(title.value,content.value)
+                onSave(title.value, content.value)
                 onDismiss()
             }) {
                 Text("Save")
@@ -169,6 +182,7 @@ fun AddNoteDialog(
         }
     )
 }
+
 
 
 
