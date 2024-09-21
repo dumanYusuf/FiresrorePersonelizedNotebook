@@ -56,5 +56,22 @@ class NoteRepoImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteNote(note: Notes): Resource<Notes> {
+        return try {
+            val userId = firebaseAuth.currentUser?.uid
+            if (userId != null) {
+                val userNoteDocumentRef = firestore.collection("Users").document(userId)
+                    .collection("Notes").document(note.noteId)
+
+                userNoteDocumentRef.delete().await()
+                Resource.Success(note)
+            } else {
+                Resource.Error("User not found")
+            }
+        } catch (e: Exception) {
+            Resource.Error("Error deleting note: ${e.message}")
+        }
+    }
+
 }
 

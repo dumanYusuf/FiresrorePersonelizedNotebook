@@ -72,7 +72,10 @@ fun HomePage(
                         Column(modifier = Modifier.padding(16.dp)) {
                             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                                 Text(text = note.title, fontSize = 20.sp)
-                                IconButton(onClick = { /*TODO*/ }) {
+                                IconButton(onClick = {
+                                    viewModel.deleteNote(note)
+                                    viewModel.getNotes()
+                                }) {
                                     Icon(painter = painterResource(id = R.drawable.delete), contentDescription = "")
                                 }
                             }
