@@ -31,7 +31,6 @@ fun PageController() {
     var currentUser by remember { mutableStateOf(auth.currentUser) }
     var startDestination by remember { mutableStateOf(Screen.RegisterPage.route) }
 
-    // Firebase auth değişikliklerini dinle
     DisposableEffect(Unit) {
         val authStateListener = FirebaseAuth.AuthStateListener { firebaseAuth ->
             currentUser = firebaseAuth.currentUser
@@ -42,7 +41,6 @@ fun PageController() {
         }
     }
 
-    // startDestination'ı kullanıcı durumuna göre ayarla
     LaunchedEffect(currentUser) {
         startDestination = if (currentUser != null) {
             Screen.HomePage.route
@@ -99,13 +97,11 @@ fun PageController() {
             composable(Screen.LoginPage.route) {
                 LoginPage(navController = navController)
             }
-            // Home Page (Sadece giriş yaptıktan sonra)
             composable(Screen.HomePage.route) {
-                HomePage(navController = navController)
+                HomePage()
             }
-            // Person Page (Sadece giriş yaptıktan sonra)
             composable(Screen.PersonPage.route) {
-                PersonPage()
+                PersonPage(navController)
             }
         }
     }

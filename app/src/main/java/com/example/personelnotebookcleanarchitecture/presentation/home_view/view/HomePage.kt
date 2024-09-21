@@ -35,12 +35,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.personelnotebookcleanarchitecture.R
 import com.example.personelnotebookcleanarchitecture.Screen
+import com.example.personelnotebookcleanarchitecture.domain.model.Notes
 import com.example.personelnotebookcleanarchitecture.presentation.home_view.HomeViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomePage(
-    navController: NavController,
     viewModel: HomeViewModel= hiltViewModel()
 ) {
     val showDialog = remember { mutableStateOf(false) }
@@ -64,31 +64,34 @@ fun HomePage(
                 .size(100.dp)
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
-                .clickable { showDialog.value = true }, // Diyaloğu aç
+                .clickable { showDialog.value = true },
             painter = painterResource(id = R.drawable.add),
             contentDescription = "Add"
         )
-
-        Button(
-            modifier = Modifier.align(Alignment.Center),
-            onClick = {
-                viewModel.logOut()
-                navController.navigate(Screen.LoginPage.route)
-        }) {
-            Text(text = "LogOut")
-        }
-
     }
 
     if (showDialog.value) {
-        AddNoteDialog(onDismiss = { showDialog.value = false })
+        AddNoteDialog(
+            notes = null,
+            onDismiss = { showDialog.value = false },
+            onSave = { title, content ,->
+                // Burada viewModel.addNote fonksiyonunu çağırıyoruz
+                viewModel.addNote(Notes(title = title, content = content,))
+                showDialog.value = false
+            }
+        )
     }
 }
 
 @Composable
-fun AddNoteDialog(onDismiss: () -> Unit) {
+fun AddNoteDialog(
+    notes: Notes?,
+    onDismiss: () -> Unit,
+    onSave:(String,String)->Unit
+) {
     val title = remember { mutableStateOf("") }
     val content = remember { mutableStateOf("") }
+
 
     AlertDialog(
         onDismissRequest = {},
@@ -111,6 +114,7 @@ fun AddNoteDialog(onDismiss: () -> Unit) {
         confirmButton = {
             TextButton(onClick = {
                 // save note
+                onSave(title.value,content.value)
                 onDismiss()
             }) {
                 Text("Save")
