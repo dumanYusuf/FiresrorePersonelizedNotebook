@@ -7,6 +7,7 @@ import com.example.personelnotebookcleanarchitecture.domain.model.Notes
 import com.example.personelnotebookcleanarchitecture.domain.use_case.add_use_case.AddUseCase
 import com.example.personelnotebookcleanarchitecture.domain.use_case.delete_use_case.DeleteUseCase
 import com.example.personelnotebookcleanarchitecture.domain.use_case.get_use_case.GetNoteUseCase
+import com.example.personelnotebookcleanarchitecture.domain.use_case.search_use_case.SearchUseCase
 import com.example.personelnotebookcleanarchitecture.domain.use_case.update_use_case.UpdateUseCase
 import com.example.personelnotebookcleanarchitecture.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +22,8 @@ class HomeViewModel @Inject constructor(
     private val addUseCase: AddUseCase,
     private val getNoteUseCase: GetNoteUseCase,
     private val deleteUseCase: DeleteUseCase,
-    private val updateUseCase: UpdateUseCase
+    private val updateUseCase: UpdateUseCase,
+    private val searchUseCase: SearchUseCase
 ): ViewModel() {
 
     private val _state= MutableStateFlow<HomeState>(HomeState())
@@ -70,5 +72,27 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+
+    fun searchNotes(searchNote:String){
+        viewModelScope.launch {
+            _state.value=HomeState(isLoading = true)
+            searchUseCase.searchNote(searchNote).collect{result->
+                when(result){
+                    is Resource.Success->{
+                        _state.value= HomeState(noteList = result.data?: emptyList())
+                        Log.e("get notes","viewmodel success search notes")
+                    }
+                    is Resource.Error->{
+                        _state.value=HomeState(isError = result.message?:"Error")
+                        Log.e("get notes","viewmodel failure search notes:${result.message}")
+                    }
+                    is Resource.Loading->{
+                        _state.value=HomeState(isLoading =true)
+                        Log.e("get notes","viewmodel isloading search notes")
+                    }
+                }
+            }
+        }
+    }
 
 }

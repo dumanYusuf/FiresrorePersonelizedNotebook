@@ -14,4 +14,5 @@ interface NoteRepo {
      fun getNotes(): Flow<Resource<List<Notes>>>// burda flow kullandık suspend yazmamamın sebebi flow zaten coruitene çalışır o yüzden gerek yok
      suspend fun deleteNote(note:Notes):Resource<Notes>
      suspend fun updateNote(notes: Notes):Resource<Notes>
+     fun searchNotes(searchNote:String):Flow<Resource<List<Notes>>>
 }

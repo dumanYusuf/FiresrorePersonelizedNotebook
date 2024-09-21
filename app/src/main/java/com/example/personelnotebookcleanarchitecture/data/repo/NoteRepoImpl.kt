@@ -90,5 +90,40 @@ class NoteRepoImpl @Inject constructor(
         }
     }
 
+    override fun searchNotes(searchNote: String): Flow<Resource<List<Notes>>> = flow {
+        try {
+            // Yükleniyor durumunu yay
+            emit(Resource.Loading())
+
+            // Firebase Auth üzerinden userId al
+            val userId = firebaseAuth.currentUser?.uid
+            if (userId != null) {
+                // Kullanıcının notlar koleksiyonuna ulaş
+                val userNoteDocument = firestore.collection("Users").document(userId)
+                    .collection("Notes")
+
+                // Sadece başlığa göre arama yap (title alanına göre filtrele)
+                val snapshot = userNoteDocument
+                    .whereGreaterThanOrEqualTo("title", searchNote)
+                    .whereLessThanOrEqualTo("title", searchNote + '\uf8ff')  // Firestore String sıralaması için
+                    .get()
+                    .await()  // Coroutine için await kullanımı
+
+                // Notlar listesi oluştur
+                val notes = snapshot.documents.map { document ->
+                    document.toObject(Notes::class.java) ?: Notes() // Notları Notes nesnesine dönüştür
+                }
+
+                // Eğer notlar boş değilse sonucu yay
+                emit(Resource.Success(notes))
+            } else {
+                emit(Resource.Error("Kullanıcı kimliği alınamadı"))
+            }
+        } catch (e: Exception) {
+            emit(Resource.Error("Hata: ${e.message}"))
+        }
+    }
+
+
 }
 

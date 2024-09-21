@@ -47,6 +47,8 @@ fun HomePage(
     val showDialog = remember { mutableStateOf(false) }
     val selectedNote = remember { mutableStateOf<Notes?>(null) }
     val stateNote by viewModel.state.collectAsState()
+    val tfSearching = remember { mutableStateOf("") }
+    val isSearching = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         viewModel.getNotes()
@@ -56,13 +58,42 @@ fun HomePage(
         .fillMaxSize()
         .padding(10.dp)) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(text = "NoteApp", fontSize = 24.sp)
-                Icon(
-                    modifier = Modifier.size(30.dp),
-                    painter = painterResource(id = R.drawable.search),
-                    contentDescription = ""
-                )
+            if (isSearching.value) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        modifier = Modifier.weight(1f),
+                        value = tfSearching.value,
+                        onValueChange = {
+                            tfSearching.value = it
+                            viewModel.searchNotes(it)
+                        },
+                        label = { Text("Search") }
+                    )
+                    IconButton(onClick = {
+                        tfSearching.value = ""
+                        isSearching.value = false
+                        viewModel.getNotes()
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.close),
+                            contentDescription = "Close Search"
+                        )
+                    }
+                }
+            } else {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text(text = "NoteApp", fontSize = 24.sp)
+                    Icon(
+                        modifier = Modifier.size(30.dp)
+                            .clickable { isSearching.value = true },
+                        painter = painterResource(id = R.drawable.search),
+                        contentDescription = "Search"
+                    )
+                }
             }
             Spacer(modifier = Modifier.size(8.dp))
             LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -115,11 +146,11 @@ fun HomePage(
             onDismiss = { showDialog.value = false },
             onSave = { title, content ->
                 if (selectedNote.value != null) {
-                    // Update existing note
+                    // Mevcut notu güncelle
                     val updatedNote = selectedNote.value!!.copy(title = title, content = content)
                     viewModel.updateNote(updatedNote)
                 } else {
-                    // Add a new note
+                    // Yeni not ekle
                     viewModel.addNote(Notes(title = title, content = content))
                 }
                 viewModel.getNotes()
