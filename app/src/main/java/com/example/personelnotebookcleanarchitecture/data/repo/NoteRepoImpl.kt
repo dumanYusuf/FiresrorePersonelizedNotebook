@@ -4,6 +4,8 @@ import com.example.personelnotebookcleanarchitecture.domain.repo.NoteRepo
 import com.example.personelnotebookcleanarchitecture.util.Resource
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -31,6 +33,26 @@ class NoteRepoImpl @Inject constructor(
             }
         } catch (e: Exception) {
             Resource.Error("Error: ${e.message}")
+        }
+    }
+
+    override fun getNotes(): Flow<Resource<List<Notes>>> = flow{
+        try {
+            val userId=firebaseAuth.currentUser?.uid
+            if (userId!=null){
+                val userDocumentRef=firestore.collection("Users").document(userId)
+               val snapNote =userDocumentRef.collection("Notes").get().await()// verileri alırken get kullandım,listenerda kullanabilirdim
+                val noteList=snapNote.documents.map {documentSnapshot ->  
+                    documentSnapshot.toObject(Notes::class.java)?.copy(noteId = documentSnapshot.id)
+                }.filterNotNull()
+                emit(Resource.Success(noteList))
+            }
+            else{
+                emit(Resource.Error("User not found"))
+            }
+        }
+        catch (e:Exception){
+            emit(Resource.Error("Error:${e.message}"))
         }
     }
 

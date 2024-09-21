@@ -2,8 +2,8 @@ package com.example.personelnotebookcleanarchitecture.domain.model
 
 data class Notes(
     val noteId:String="",
-    val title:String,
-    val content:String
+    val title:String="",
+    val content:String=""
 )
 
 
