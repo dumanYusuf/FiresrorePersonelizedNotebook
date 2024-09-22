@@ -27,3 +27,4 @@ Bu yapı, kodun okunabilirliğini, bakımını ve test edilebilirliğini artır�
 ![image alt](https://github.com/dumanYusuf/FiresrorePersonelizedNotebook/blob/master/personelNotebook4.png?raw=true)
 ![image alt](https://github.com/dumanYusuf/FiresrorePersonelizedNotebook/blob/master/personelNotebook5.png?raw=true)
 ![image alt](https://github.com/dumanYusuf/FiresrorePersonelizedNotebook/blob/master/personelNoteook6.png?raw=true)
+![image alt](https://github.com/dumanYusuf/FiresrorePersonelizedNotebook/blob/master/personelNotebook7.png?raw=true)
