@@ -22,3 +22,4 @@ Repository: Veritabanı veya uzak veri kaynakları ile etkileşimde bulunur. Fir
 Bu yapı, kodun okunabilirliğini, bakımını ve test edilebilirliğini artırır. Her bir fonksiyon ve sınıf, belirli bir işlevi yerine getirecek şekilde tasarlanmıştır, bu da uygulamanın daha düzenli ve yönetilebilir olmasını sağlar.
 
 ![image alt](https://github.com/dumanYusuf/FiresrorePersonelizedNotebook/blob/master/personelNotebook1.png?raw=true)
+![image alt](https://github.com/dumanYusuf/FiresrorePersonelizedNotebook/blob/master/personelNotebook2.png?raw=true)
