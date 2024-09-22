@@ -1,6 +1,7 @@
 package com.example.personelnotebookcleanarchitecture.domain.repo
 
 import com.example.personelnotebookcleanarchitecture.domain.model.Notes
+import com.example.personelnotebookcleanarchitecture.domain.model.User
 import com.example.personelnotebookcleanarchitecture.util.Resource
 import kotlinx.coroutines.flow.Flow
 
@@ -15,4 +16,5 @@ interface NoteRepo {
      suspend fun deleteNote(note:Notes):Resource<Notes>
      suspend fun updateNote(notes: Notes):Resource<Notes>
      fun searchNotes(searchNote:String):Flow<Resource<List<Notes>>>
+     suspend fun getUsers():Resource<List<User>>
 }

@@ -1,4 +1,5 @@
 import com.example.personelnotebookcleanarchitecture.domain.model.Notes
+import com.example.personelnotebookcleanarchitecture.domain.model.User
 import com.example.personelnotebookcleanarchitecture.domain.model.toMap
 import com.example.personelnotebookcleanarchitecture.domain.repo.NoteRepo
 import com.example.personelnotebookcleanarchitecture.util.Resource
@@ -115,6 +116,24 @@ class NoteRepoImpl @Inject constructor(
         }
     }
 
+    override suspend fun getUsers(): Resource<List<User>> {
+        return try {
+            val userId = firebaseAuth.currentUser?.uid
+            if (userId != null) {
+                val userDocument = firestore.collection("Users").document(userId).get().await()
+                val user = userDocument.toObject(User::class.java)
+                if (user != null) {
+                    Resource.Success(listOf(user))
+                } else {
+                    Resource.Error("User not found")
+                }
+            } else {
+                Resource.Error("User is not logged in")
+            }
+        } catch (e: Exception) {
+            Resource.Error("Error: ${e.localizedMessage}")
+        }
+    }
 
 }
 

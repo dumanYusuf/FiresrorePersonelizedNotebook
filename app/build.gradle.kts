@@ -106,4 +106,8 @@ dependencies {
     // Coroutine Lifecycle Scopes
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+
+    // coil
+    implementation("io.coil-kt:coil-compose:2.0.0")
+
 }

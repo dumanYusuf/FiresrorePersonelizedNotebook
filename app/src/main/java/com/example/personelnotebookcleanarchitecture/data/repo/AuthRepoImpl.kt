@@ -41,7 +41,7 @@ class AuthRepoImpl @Inject constructor(private val auth:FirebaseAuth):AuthRepo {
                     email = email,
                     userName = userName,
                     userLastName = userLastName,
-                    profilUrl = "" // "https://media.istockphoto.com/id/1332100919/tr/vekt%C3%B6r/man-icon-black-icon-person-symbol.jpg?s=612x612&w=0&k=20&c=lVmBCgzh7mw_UbIHKvFtpi7W8J21mEdrNQsfOgn0PxA="
+                    profilUrl =   "https://media.istockphoto.com/id/1332100919/tr/vekt%C3%B6r/man-icon-black-icon-person-symbol.jpg?s=612x612&w=0&k=20&c=lVmBCgzh7mw_UbIHKvFtpi7W8J21mEdrNQsfOgn0PxA="
                 )
 
                 val firestore = FirebaseFirestore.getInstance()
